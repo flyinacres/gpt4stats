@@ -38,6 +38,21 @@ def extract_p_values(text):
     p_values = re.findall(p_value_pattern, text, re.IGNORECASE)
     return {"p_values": p_values}
 
+def extract_statistics(text):
+    ci_pattern = r'\d+% CI \[\s*-?\d+\.\d+,\s*-?\d+\.\d+\]'
+    sample_size_pattern = r'N\s*=\s*\d+'
+    effect_size_pattern = r'Cohen\'s d\s*=\s*-?\d+\.\d+'
+    
+    confidence_intervals = re.findall(ci_pattern, text)
+    sample_sizes = re.findall(sample_size_pattern, text)
+    effect_sizes = re.findall(effect_size_pattern, text)
+    
+    return {
+        "confidence_intervals": confidence_intervals,
+        "sample_sizes": sample_sizes,
+        "effect_sizes": effect_sizes
+    }
+
 def main():
     parser = argparse.ArgumentParser(description='Extract statistics from a research paper PDF.')
     parser.add_argument('pdf_path', type=str, help='Path to the PDF file')
@@ -50,7 +65,7 @@ def main():
         for section, content in sections.items():
             print(f"\n=== {section} ===\n{content}\n")
             print(f"Extracted p-values: {extract_p_values(content)}")
+            print(f"Extracted statistics: {extract_statistics(content)}")
 
 if __name__ == '__main__':
     main()
-
