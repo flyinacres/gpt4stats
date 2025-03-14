@@ -33,6 +33,11 @@ def segment_text(text):
     
     return sections
 
+def extract_p_values(text):
+    p_value_pattern = r'p\s*[<>=]\s*\d*\.\d+'
+    p_values = re.findall(p_value_pattern, text, re.IGNORECASE)
+    return {"p_values": p_values}
+
 def main():
     parser = argparse.ArgumentParser(description='Extract statistics from a research paper PDF.')
     parser.add_argument('pdf_path', type=str, help='Path to the PDF file')
@@ -44,8 +49,8 @@ def main():
         sections = segment_text(cleaned_text)
         for section, content in sections.items():
             print(f"\n=== {section} ===\n{content}\n")
+            print(f"Extracted p-values: {extract_p_values(content)}")
 
-# The way GPT set up the code it tries to regenerate the environment each time.  Not sure why
 if __name__ == '__main__':
     main()
-    
+
