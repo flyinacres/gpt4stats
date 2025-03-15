@@ -6,6 +6,7 @@ Functional code--very cool.
 Weird way of packaging it so that it tries to reproduce the environment every time
 No real understanding of the goal.  It is now grabbing stats with no context. No real use in that.
 
+
 Prompt 7
 
 Very cool: gpt has a side bar for previous contexts, so I was able to jump right into this.  Although when I initially asked it if it maintained context, it said no.  Back in business!
@@ -14,11 +15,12 @@ First error--import os was missing
 Output now is in a .json file
 I validated it.  It is valid json
 
+
 'Final Prompt' - I will likely add more
 
 Output is now empty.  I am experimenting with using gpt to help me diagnose the problem.  But I must resort to ye olde fashiony debuggening, as gpt isn't finding what turns out to be an obvious bug quickly.  Debugging code you did not write is never easy.  
 
-I should note that gpt added comments, but they are of the worst sort.  They tell you what the name of each function is, but not what the function does (if not obvious) or how, or anything like that...
+I should note that gpt added comments, but they are mediocre.  They tell you what the name of each function is, but not much about what the function does (if not obvious) or how, or anything like that...
 
 
 I identified the general problem and gpt proposed a new clean_text() funtion.  Unfortunately this does not run--it has a bug.
@@ -30,6 +32,11 @@ By now it is identifying sections properly, again, and getting data, but the sta
 I would also like to ask the system for two enhancements:
 1. I had asked for hierarchical, but it is grouping stats by stats, not by test, so there is no correspondence. Of course GPT doesn't know this is useless
 2. I'd like to see if I can talk it into generating useful comments.
-  
+3. Improved logging  
+
+I have two general requests to improve this code: 1. There are comments at the start of each method but they do not include much useful information. Please improve them to explain what each function does and why, and to note anything important or unusual about the function.  2. The logging is very basic, and does not include any diagnostic information. For instance, if no text is extracted or no section headers are found, this information is not logged. Please improve the logging to include good diagnostic information of this nature.  After making these improvements, please regenerate the application.
+
+I will work on other issues after testing this code
 
 
+Final + 1
