@@ -1,85 +1,114 @@
 import argparse
-import os
+import json
+import logging
 import fitz
 import re
-import json
+import os
+
+# Configure logging
+logging.basicConfig(filename='logs/extraction.log', level=logging.INFO, 
+                    format='%(asctime)s - %(levelname)s - %(message)s')
 
 def extract_text_from_pdf(pdf_path):
+    """Extract text from a PDF file."""
     try:
-        with fitz.open(pdf_path) as doc:
-            text = "\n".join([page.get_text() for page in doc])
+        doc = fitz.open(pdf_path)
+        text = "\n".join([page.get_text("text") for page in doc])
         return text
     except Exception as e:
-        print(f"Error processing PDF: {e}")
-        return None
+        logging.error(f"Error extracting text: {e}")
+        return ""
 
 def clean_text(text):
-    if not text:
-        return ""
-    text = re.sub(r'\s+', ' ', text)  # Remove extra spaces and new lines
-    text = text.encode('utf-8', 'ignore').decode('utf-8')  # Normalize encoding
-    return text.strip()
+    """Preprocess text by removing unwanted artifacts."""
+    text = re.sub(r'\s+', ' ', text).strip()
+    return text
+
+
+def segment_sections(text):
+    section_header_pattern = re.compile(
+        r'^\s*(?:[IVX]+[.)]?)?\s*(METHODS|RESULTS|DISCUSSION|CONCLUSION)\s*$',
+        re.IGNORECASE | re.MULTILINE
+    )
+
+    sections = {}
+    current_section = None
+    buffer = []
+
+    for line in text.split("\n"):
+        match = section_header_pattern.match(line)
+        print(f"Match found: {match}")
+        if match:
+            if current_section:
+                sections[current_section] = "\n".join(buffer).strip()
+                print(f"Stored section: {current_section} (Length: {len(sections[current_section])})")  # Debug output
+
+            current_section = match.group(1).upper()
+            buffer = []
+        else:
+            buffer.append(line)
+
+    if current_section:
+        sections[current_section] = "\n".join(buffer).strip()
+        print(f"Stored section: {current_section} (Length: {len(sections[current_section])})")  # Debug output
+
+    return sections
+
 
 def segment_text(text):
+    """Segment text based on section headings."""
     sections = {}
-    current_section = "INTRODUCTION"  # Default section
-    sections[current_section] = ""
+    matches = re.finditer(r'(?m)^(METHODS|RESULTS|DISCUSSION|CONCLUSION)\b', text)
+    positions = [(m.start(), m.group()) for m in matches]
     
-    for line in text.split("\n"):
-        line = line.strip()
-        if re.match(r'^(METHODS|RESULTS|DISCUSSION|CONCLUSION|REFERENCES)$', line, re.IGNORECASE):
-            current_section = line.upper()
-            sections[current_section] = ""
-        else:
-            sections[current_section] += line + " "
+    for i, (pos, title) in enumerate(positions):
+        end = positions[i + 1][0] if i + 1 < len(positions) else None
+        sections[title] = text[pos:end].strip()
     
     return sections
 
-def extract_p_values(text):
-    p_value_pattern = r'p\s*[<>=]\s*\d*\.\d+'
-    p_values = re.findall(p_value_pattern, text, re.IGNORECASE)
-    return {"p_values": p_values}
-
 def extract_statistics(text):
-    ci_pattern = r'\d+% CI \[\s*-?\d+\.\d+,\s*-?\d+\.\d+\]'
-    sample_size_pattern = r'N\s*=\s*\d+'
-    effect_size_pattern = r'Cohen\'s d\s*=\s*-?\d+\.\d+'
-    
-    confidence_intervals = re.findall(ci_pattern, text)
-    sample_sizes = re.findall(sample_size_pattern, text)
-    effect_sizes = re.findall(effect_size_pattern, text)
-    
-    return {
-        "confidence_intervals": confidence_intervals,
-        "sample_sizes": sample_sizes,
-        "effect_sizes": effect_sizes
+    """Extract p-values, confidence intervals, sample sizes, and effect sizes."""
+    stats = {
+        "p_values": re.findall(r'p\s*[<>=]\s*0\.\d+', text, re.IGNORECASE),
+        "confidence_intervals": re.findall(r'\d+% CI \[.*?\]', text),
+        "sample_sizes": re.findall(r'N\s*=\s*\d+', text, re.IGNORECASE),
+        "effect_sizes": re.findall(r'(Cohen\'s d|η²|r)\s*=\s*[-+]?[0-9]*\.?[0-9]+', text, re.IGNORECASE)
     }
+    return stats
 
-def save_to_json(data, output_path):
-    with open(output_path, "w") as json_file:
-        json.dump(data, json_file, indent=4)
-    print(f"Results saved to {output_path}")
+def save_to_json(output_path, data):
+    """Save extracted statistics to a JSON file."""
+    with open(output_path, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=4)
 
 def main():
-    parser = argparse.ArgumentParser(description='Extract statistics from a research paper PDF.')
-    parser.add_argument('pdf_path', type=str, help='Path to the PDF file')
+    parser = argparse.ArgumentParser(description='Extract statistical information from a research paper PDF.')
+    parser.add_argument('pdf_path', help='Path to the input PDF file')
     args = parser.parse_args()
     
+    if not os.path.exists(args.pdf_path):
+        logging.error("File not found.")
+        print("Error: File not found.")
+        return
+    
+    logging.info(f"Processing file: {args.pdf_path}")
     text = extract_text_from_pdf(args.pdf_path)
-    if text:
-        cleaned_text = clean_text(text)
-        sections = segment_text(cleaned_text)
-        results = {}
-        
-        for section, content in sections.items():
-            results[section] = {
-                "p_values": extract_p_values(content),
-                "statistics": extract_statistics(content)
-            }
-        
-        output_file = os.path.splitext(args.pdf_path)[0] + ".json"
-        save_to_json(results, output_file)
+    cleaned_text = clean_text(text)
 
-if __name__ == '__main__':
+
+    #sections = segment_text(cleaned_text)
+    sections = segment_sections(cleaned_text)
+    print(f"Detected sections: {list(sections.keys())}")
+
+    extracted_stats = {section: extract_statistics(content) for section, content in sections.items()}
+    
+    json_path = os.path.splitext(args.pdf_path)[0] + ".json"
+    save_to_json(json_path, extracted_stats)
+    
+    print(f"Extraction complete. Results saved to {json_path}")
+    logging.info(f"Extraction complete. JSON saved to {json_path}")
+
+if __name__ == "__main__":
     main()
 
