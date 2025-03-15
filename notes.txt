@@ -1,5 +1,19 @@
-Notes to this point (Prompt 6)
+Notes to this point 
+
+Prompt 6
 
 Functional code--very cool.
 Weird way of packaging it so that it tries to reproduce the environment every time
 No real understanding of the goal.  It is now grabbing stats with no context. No real use in that.
+
+Prompt 7
+
+Very cool: gpt has a side bar for previous contexts, so I was able to jump right into this.  Although when I initially asked it if it maintained context, it said no.  Back in business!
+
+First error--import os was missing
+Output now is in a .json file
+I validated it.  It is valid json
+
+
+
+

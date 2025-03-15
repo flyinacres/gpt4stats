@@ -1,6 +1,8 @@
 import argparse
+import os
 import fitz
 import re
+import json
 
 def extract_text_from_pdf(pdf_path):
     try:
@@ -53,6 +55,11 @@ def extract_statistics(text):
         "effect_sizes": effect_sizes
     }
 
+def save_to_json(data, output_path):
+    with open(output_path, "w") as json_file:
+        json.dump(data, json_file, indent=4)
+    print(f"Results saved to {output_path}")
+
 def main():
     parser = argparse.ArgumentParser(description='Extract statistics from a research paper PDF.')
     parser.add_argument('pdf_path', type=str, help='Path to the PDF file')
@@ -62,10 +69,17 @@ def main():
     if text:
         cleaned_text = clean_text(text)
         sections = segment_text(cleaned_text)
+        results = {}
+        
         for section, content in sections.items():
-            print(f"\n=== {section} ===\n{content}\n")
-            print(f"Extracted p-values: {extract_p_values(content)}")
-            print(f"Extracted statistics: {extract_statistics(content)}")
+            results[section] = {
+                "p_values": extract_p_values(content),
+                "statistics": extract_statistics(content)
+            }
+        
+        output_file = os.path.splitext(args.pdf_path)[0] + ".json"
+        save_to_json(results, output_file)
 
 if __name__ == '__main__':
     main()
+
