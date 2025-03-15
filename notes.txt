@@ -25,7 +25,11 @@ I identified the general problem and gpt proposed a new clean_text() funtion.  U
 
 At this point I ran out of tokens for the day
 
+By now it is identifying sections properly, again, and getting data, but the statistics are now empty. I will work on this when I have more tokens to burn.
 
+I would also like to ask the system for two enhancements:
+1. I had asked for hierarchical, but it is grouping stats by stats, not by test, so there is no correspondence. Of course GPT doesn't know this is useless
+2. I'd like to see if I can talk it into generating useful comments.
   
 
 

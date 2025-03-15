@@ -40,7 +40,6 @@ def segment_sections(text):
 
     for line in text.split("\n"):
         match = section_header_pattern.match(line)
-        print(f"Match found: {match}")
         if match:
             if current_section:
                 sections[current_section] = "\n".join(buffer).strip()
@@ -99,13 +98,7 @@ def main():
     text = extract_text_from_pdf(args.pdf_path)
     cleaned_text = clean_text(text)
 
-    print(f"Extracted Text After Cleaning:\n{cleaned_text[:1000]}")  # Print the first 1000 characters
-
-
-
-    #sections = segment_text(cleaned_text)
     sections = segment_sections(cleaned_text)
-    print(f"Detected sections: {list(sections.keys())}")
 
     extracted_stats = {section: extract_statistics(content) for section, content in sections.items()}
     
