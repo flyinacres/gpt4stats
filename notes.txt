@@ -14,6 +14,18 @@ First error--import os was missing
 Output now is in a .json file
 I validated it.  It is valid json
 
+'Final Prompt' - I will likely add more
 
+Output is now empty.  I am experimenting with using gpt to help me diagnose the problem.  But I must resort to ye olde fashiony debuggening, as gpt isn't finding what turns out to be an obvious bug quickly.  Debugging code you did not write is never easy.  
+
+I should note that gpt added comments, but they are of the worst sort.  They tell you what the name of each function is, but not what the function does (if not obvious) or how, or anything like that...
+
+
+I identified the general problem and gpt proposed a new clean_text() funtion.  Unfortunately this does not run--it has a bug.
+
+At this point I ran out of tokens for the day
+
+
+  
 
 

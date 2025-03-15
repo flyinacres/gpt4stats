@@ -19,9 +19,12 @@ def extract_text_from_pdf(pdf_path):
         logging.error(f"Error extracting text: {e}")
         return ""
 
+
 def clean_text(text):
-    """Preprocess text by removing unwanted artifacts."""
-    text = re.sub(r'\s+', ' ', text).strip()
+    # Normalize spaces and remove excessive blank lines, but keep necessary newlines
+    text = re.sub(r'[^\S\r\n]+', ' ', text)  # Replace multiple spaces with a single space
+    text = re.sub(r'\n{2,}', '\n', text)  # Reduce multiple newlines to a single newline
+    text = text.strip()
     return text
 
 
@@ -95,6 +98,9 @@ def main():
     logging.info(f"Processing file: {args.pdf_path}")
     text = extract_text_from_pdf(args.pdf_path)
     cleaned_text = clean_text(text)
+
+    print(f"Extracted Text After Cleaning:\n{cleaned_text[:1000]}")  # Print the first 1000 characters
+
 
 
     #sections = segment_text(cleaned_text)
