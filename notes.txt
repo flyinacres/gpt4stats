@@ -40,3 +40,10 @@ I will work on other issues after testing this code
 
 
 Final + 1
+
+The comments are better now.  Logging is not great, but better.
+Too often when I provide examples it literally uses the examples, and nothing else (like logging only the examples I gave). 
+
+I need a better test document!
+
+with two ML/Statistics books, it pulled next to nothing. All tried a social sciences paper.  One issue is thatit doesn't look for words like confidence interval.  It is not using llm smarts to find things, just regexprs (and those are narrow.  It would be really interesting to see how an llm can do on this--likely require more fine tuning!

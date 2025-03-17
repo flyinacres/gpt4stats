@@ -1,0 +1,38 @@
+{
+    "Abstract": {},
+    "Methods": {},
+    "Results": {},
+    "Discussion": {},
+    "methods": {},
+    "METHODS": {},
+    "DISCUSSION": {},
+    "RESULTS": {},
+    "abstract": {},
+    "results": {},
+    "method": {},
+    "Method": {},
+    "METHOD": {},
+    "introduction": {
+        "p_values": [
+            "p = 0.0001",
+            "p = 0.0001",
+            "p = 0.0001",
+            "p < 0.05"
+        ]
+    },
+    "conclusion": {
+        "p_values": [
+            "p=0.0001"
+        ]
+    },
+    "Conclusion": {
+        "p_values": [
+            "p<0.10",
+            "p<0.10",
+            "p<0.01"
+        ],
+        "sample_sizes": [
+            "N=199"
+        ]
+    }
+}

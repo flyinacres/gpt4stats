@@ -1,0 +1,18 @@
+{
+    "methods": {},
+    "method": {},
+    "results": {},
+    "Introduction": {},
+    "result": {
+        "p_values": [
+            "p < 0.5"
+        ]
+    },
+    "conclusion": {
+        "sample_sizes": [
+            "N=1",
+            "N=1"
+        ]
+    },
+    "Methods": {}
+}
