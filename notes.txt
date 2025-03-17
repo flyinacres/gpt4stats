@@ -47,3 +47,13 @@ Too often when I provide examples it literally uses the examples, and nothing el
 I need a better test document!
 
 with two ML/Statistics books, it pulled next to nothing. All tried a social sciences paper.  One issue is thatit doesn't look for words like confidence interval.  It is not using llm smarts to find things, just regexprs (and those are narrow.  It would be really interesting to see how an llm can do on this--likely require more fine tuning!
+
+
+Final + 2
+Although one of the steps in the project description included testing, this was left out when the actual prompts were generate.
+
+So I asked it to add this back in.
+
+This shows one of the challenges.  Generating lots of stuff, but at any step in may leave something out. Who is verifying this.
+
+So it did generate some tests. They are OK code.  One issue is that a 'sample.pdf' is required. Where does that come from?  And they expect every function in extract_stats to be exportable...

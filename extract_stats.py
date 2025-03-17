@@ -140,3 +140,5 @@ if __name__ == "__main__":
     setup_logging()
     main()
 
+__all__ = ["extract_text_from_pdf", "clean_text", "segment_text", "extract_statistics", "save_json"]
+
